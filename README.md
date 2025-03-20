@@ -14,9 +14,8 @@ Upload e Download de Documentos (Cada cliente acessa apenas os seus)
 Notificações (Envio de e-mails ao cliente quando um documento for atualizado)
 Logs de Acesso e Auditoria (Para controle de segurança)
 2️⃣ Estrutura do Banco de Dados (MySQL)
-sql
-Copiar
-Editar
+
+´´´js
 CREATE TABLE usuarios (
 id INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(255),
@@ -43,6 +42,8 @@ caminho_arquivo TEXT,
 data_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
+´´´
+
 3️⃣ Estrutura do Backend (ASP.NET Core)
 📌 Principais Endpoints
 
