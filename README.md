@@ -1,54 +1,82 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite ( Ged Contability for Client Web17 )
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Stack Recomendada
+✅ Backend: ASP.NET Core (.NET 6+ ou .NET 8)
+✅ Frontend: React (Next.js se quiser melhor performance)
+✅ Banco de Dados: MySQL (por ser amplamente suportado em servidores compartilhados)
+✅ Armazenamento de Arquivos: Amazon S3, Backblaze B2 ou DigitalOcean Spaces (se o servidor não permitir armazenamento local)
 
-Currently, two official plugins are available:
+Estrutura do Sistema
+1️⃣ Módulos Principais
+Autenticação e Autorização (Usuário do Cliente + Administrador)
+Gerenciamento de Clientes (Cadastro, edição e listagem)
+Upload e Download de Documentos (Cada cliente acessa apenas os seus)
+Notificações (Envio de e-mails ao cliente quando um documento for atualizado)
+Logs de Acesso e Auditoria (Para controle de segurança)
+2️⃣ Estrutura do Banco de Dados (MySQL)
+sql
+Copiar
+Editar
+CREATE TABLE usuarios (
+id INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(255),
+email VARCHAR(255) UNIQUE,
+senha_hash VARCHAR(255),
+tipo ENUM('admin', 'cliente'),
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+CREATE TABLE clientes (
+id INT PRIMARY KEY AUTO_INCREMENT,
+usuario_id INT UNIQUE,
+cnpj VARCHAR(18),
+telefone VARCHAR(20),
+endereco TEXT,
+FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
 
-## Expanding the ESLint configuration
+CREATE TABLE documentos (
+id INT PRIMARY KEY AUTO_INCREMENT,
+cliente_id INT,
+nome_arquivo VARCHAR(255),
+caminho_arquivo TEXT,
+data_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+3️⃣ Estrutura do Backend (ASP.NET Core)
+📌 Principais Endpoints
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Autenticação: POST /api/auth/login
+Clientes: GET /api/clientes, POST /api/clientes
+Documentos: GET /api/documentos/{clienteId}, POST /api/documentos/upload
+📌 Segurança:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Implementar JWT para autenticação
+Configurar políticas de autorização para evitar acesso indevido
+Implementar proteção contra upload de arquivos maliciosos
+4️⃣ Estrutura do Frontend (React / Next.js)
+📌 Telas Principais:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Login
+Dashboard (para o cliente ver seus documentos)
+Área do administrador (gerenciar clientes e documentos)
+📌 Bibliotecas Úteis:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Axios (Requisições HTTP)
+React Hook Form (Gerenciamento de formulários)
+TailwindCSS ou Material UI (Estilização)
+React Query (Cache e otimização de requisições)
+5️⃣ Hospedagem e Deploy
+📌 Servidor Compartilhado:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Backend: Hospedar em um serviço compatível com .NET (Hostinger, SmarterASP.NET, Azure App Service)
+Banco de Dados: MySQL hospedado no próprio servidor
+Frontend: Deploy no Vercel (se Next.js) ou Netlify
+📌 Alternativa Melhor:
+Se possível, um VPS (como DigitalOcean ou Linode) seria mais flexível para rodar o .NET Core + MySQL + armazenamento de arquivos.
+
+🔥 Resumo
+✅ ASP.NET Core + React + MySQL
+✅ JWT para autenticação
+✅ Armazenamento de arquivos em um serviço externo (S3, Backblaze, etc.)
+✅ Servidor compartilhado pode ser limitante, mas é viável
